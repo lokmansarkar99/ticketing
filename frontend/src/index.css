@@ -1,0 +1,291 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-anek: "Anek Bangla", ui-sans-serif, system-ui, sans-serif,
+      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+      "Noto Color Emoji";
+
+    --font-lora: "Lora", serif, system-ui, "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol", "Noto Color Emoji";
+
+    --font-open_sans: "Open Sans", system-ui, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+    --background: 0 0% 96%;
+    --foreground: 227 27% 10%;
+
+    --card: 0 0% 96%;
+    --card-foreground: 227 27% 10%;
+
+    --popover: 0 0% 96%;
+    --popover-foreground: 227 27% 10%;
+
+    --primary: 195 99% 55%;
+    --primary-foreground: 0 0% 96%;
+
+    --secondary: 294 96% 42%;
+    --secondary-foreground: 0 0% 100%;
+
+    --tertiary: 214 100% 58%;
+    --tertiary-foreground: 210 100% 99%;
+
+    --muted: 0 0% 87%;
+    --muted-foreground: 0 0% 24%;
+
+    --accent: 196 100% 91%;
+    --accent-foreground: 0 0% 0%;
+
+    --destructive: 355 100% 69%;
+    --destructive-foreground: 356 100% 97%;
+
+    --warning: 14 100% 65%;
+    --warning-foreground: 12 100% 99%;
+
+    --success: 145 50% 63%;
+    --success-foreground: 142 58% 96%;
+
+    --border: 240 0% 47%;
+    --input: 240 0% 47%;
+    --ring: 240 0% 47%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 227 13% 14%;
+    --foreground: 0 0% 100%;
+
+    --card: 227 13% 14%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 227 13% 14%;
+    --popover-foreground: 240 2% 92%;
+
+    --primary: 195 99% 55%;
+    --primary-foreground: 0 0% 96%;
+
+    --secondary: 293 95% 30%;
+    --secondary-foreground: 0 0% 100%;
+
+    --tertiary: 214 100% 58%;
+    --tertiary-foreground: 210 100% 99%;
+
+    --muted: 227 8% 23%;
+    --muted-foreground: 240 1% 74%;
+
+    --accent: 196 100% 91%;
+    --accent-foreground: 0 0% 0%;
+
+    --destructive: 355 100% 69%;
+    --destructive-foreground: 356 100% 97%;
+
+    --warning: 14 100% 65%;
+    --warning-foreground: 12 100% 99%;
+
+    --success: 145 50% 63%;
+    --success-foreground: 142 58% 96%;
+
+    --border: 231 4% 68%;
+    --input: 231 4% 68%;
+    --ring: 231 4% 68%;
+
+    --radius: 0.5rem;
+  }
+}
+
+.t {
+  /* color: #1bc5fe;  primary*/
+  /* color: #840495;  secondary*/
+  /* color: #2986ff ; tertiary */
+  /* color: #ff764d;  warning*/
+  /* color: #71d099; */
+  color: #f5f5f5;
+  background-color: #131620;
+}
+
+
+.ck-editor__editable {min-height: 500px;}
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* CUSTOMIZE SCROLLBAR */
+  ::-webkit-scrollbar {
+    @apply w-3;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-foreground/20 rounded-sm hover:bg-foreground/50 transition-colors duration-200;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+
+
+  /* tailwind.css or global.css */
+.rtl-swiper .swiper-wrapper {
+  flex-direction: row-reverse !important;
+}
+
+  /* THIS WILL REMOVE THE UPPER AND LOWER ARROW ON THE NUMBER INPUT */
+  /* FOR WEBKIT (CHROME, SAFARI) */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* FOR FIREFOX */
+  input::-moz-number-spin-inner,
+  input::-moz-number-spin-outer {
+    /* OVERRIDE FIREFOX'S DEFAULT STYLING FOR NUMBER INPUTS */
+    -moz-appearance: textfield !important;
+    margin: 0;
+  }
+
+  /* FOR WEBKIT (CHROME, SAFARI AND FIREFOX) */
+  input {
+    /* FOR WEBKIT */
+    -webkit-appearance: textfield;
+    /* FOR FIREFOX */
+    -moz-appearance: textfield;
+    appearance: textfield;
+    margin: 0;
+  }
+
+  /* HIDE SCROLLBAR FRO CHROME, SAFARI AND OPERA */
+  /* .scroll-hidden::-webkit-scrollbar {
+    display: none;
+  } */
+
+  /* HIDE SCROLLBAR FOR IE, EDGE AND FIREFOX */
+  /* .scroll-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none; 
+  } */
+
+  /* HIDE SCROLLBAR FRO CHROME, SAFARI AND OPERA */
+  /* html::-webkit-scrollbar {
+    display: none;
+  } */
+
+  /* HIDE SCROLLBAR FOR IE, EDGE AND FIREFOX */
+  /* html {
+    -ms-overflow-style: none;
+    scrollbar-width: none; 
+  } */
+
+  /* IMAGE LAZY LOAD CLASSES */
+  .LazyLoad {
+    opacity: 0;
+    transition: all 1s ease-in-out;
+  }
+
+  .is-visible {
+    opacity: 1;
+  }
+
+  .custom-bar:hover {
+    opacity: 1 !important;
+  }
+}
+
+/* CUSTOMIZE TAILWIND CLASSES */
+@layer utilities {
+  /* CONTAINER CLASSES */
+
+  .active_link {
+    @apply h-9 flex items-center justify-center  border-[1px] border-primary cursor-pointer rounded-md font-[400]  transition-all duration-300 bg-primary/5 px-3 text-[18px];
+  }
+  .active_link_tab {
+    @apply h-9 flex items-center justify-center cursor-pointer rounded-md font-[400]  transition-all duration-300 bg-secondary px-3 text-[16px] text-white;
+  }
+  .inactive_link {
+    @apply flex  items-center justify-center h-9 cursor-pointer border-[1px] border-transparent  font-[400] transition-all duration-300 px-3 text-[18px];
+  }
+
+  /* ICON CLASSES */
+  .button-icon-size {
+    @apply h-[1.2rem] w-[1.2rem];
+  }
+
+  /* CUSTOM TOOLTIP */
+
+  .custom-tooltip-top {
+    @apply invisible group-hover:visible rounded-md absolute group-hover:-top-10 delay-500 border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md transition-all duration-300 opacity-0 group-hover:opacity-100 -top-7 scale-75 group-hover:scale-100;
+  }
+  .custom-tooltip-bottom {
+    @apply invisible group-hover:visible rounded-md absolute group-hover:-top-10 delay-500 border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md transition-all duration-300 opacity-0 group-hover:opacity-100 -top-7 scale-75 group-hover:scale-100;
+  }
+  .custom-tooltip-right {
+    @apply invisible group-hover:visible rounded-md absolute group-hover:left-[120%] delay-500 border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md transition-all duration-300 opacity-0 group-hover:opacity-100 left-[50%] scale-75 group-hover:scale-100;
+  }
+  .custom-tooltip-left {
+    @apply group-hover:visible invisible rounded-md absolute delay-500 group-hover:border group-hover:right-[120%]  bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md transition-all duration-300 opacity-0 group-hover:opacity-100  scale-75 group-hover:scale-100 right-[50%];
+  }
+
+  /* HEADING AND PARAGRAPH CLASSES */
+
+  /* USE FOR TESTING */
+  .test-border {
+    @apply border-[1px] border-red-500;
+  }
+  .test-breakpoint {
+    @apply bg-red-300 sm:bg-purple-500 md:bg-green-500 lg:bg-amber-400 xl:bg-blue-500 2xl:bg-pink-500;
+  }
+
+  /* CUSTOMIZE TABLE CLASSES */
+  /* TABLE  */
+  .custom-table {
+    @apply leading-7 h-1 py-0.5 px-2;
+  }
+}
+
+/* SHADCN DATE PICKER CUSTOM CLASS */
+.rdp-vhidden {
+  display: none !important;
+}
+/* Add this CSS to your styles */
+.vertical-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg); /* Optional: adjust orientation if needed */
+  font-size: 1rem; /* Adjust as desired */
+}
+
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 3px;
+  height: 3px; 
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 0.6);
+  border-radius: 10px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+

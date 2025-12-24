@@ -1,0 +1,14 @@
+https://ui.aceternity.com/components/card-hover-effect
+https://ui.aceternity.com/components/expandable-card
+https://ui.aceternity.com/components/flip-words
+https://ui.aceternity.com/components/infinite-moving-cards
+https://ui.aceternity.com/components/link-preview
+https://ui.aceternity.com/components/placeholders-and-vanish-input
+https://ui.aceternity.com/components/sticky-scroll-reveal
+https://ui.aceternity.com/components/tabs
+https://ui.aceternity.com/components/text-generate-effect
+https://ui.aceternity.com/components/typewriter-effect
+https://ui.aceternity.com/components/cards
+https://www.hover.dev/components/progress
+https://www.hover.dev/components/other
+https://www.hover.dev/components/countdown

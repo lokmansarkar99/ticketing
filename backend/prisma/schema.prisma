@@ -1,0 +1,1464 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model ForgetOTP {
+  id        Int      @id @default(autoincrement())
+  token     String   @db.Text
+  userName  String
+  otp       Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AboutUs {
+  id        Int      @id @default(autoincrement())
+  image     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PartialInfo {
+  id                 Int      @id @default(autoincrement())
+  counterBookingTime String   @default("1 Hour")
+  partialPercentage  Int
+  time               String   @default("2 Hours")
+  createdAt          DateTime @default(now())
+}
+
+model User {
+  id                               Int                         @id @default(autoincrement())
+  userName                         String                      @unique
+  email                            String?
+  password                         String
+  roleId                           Int
+  counterId                        Int
+  contactNo                        String?                     @default("N/A")
+  address                          String?                     @default("N/A")
+  dateOfBirth                      String?                     @default("N/A")
+  gender                           UserGender?                 @default(Male)
+  maritalStatus                    MarritalStatus?             @default(Married)
+  createdAt                        DateTime                    @default(now())
+  bloodGroup                       String?                     @default("N/A")
+  count                            Int                         @default(0)
+  blockDate                        DateTime?
+  active                           Boolean                     @default(true)
+  avatar                           String                      @default("https://res.cloudinary.com/droyjiqwf/image/upload/v1696801827/download_d6s8bi.jpg")
+  role                             Role                        @relation(fields: [roleId], references: [id])
+  counter                          Counter                     @relation(fields: [counterId], references: [id])
+  CoachConfig                      CoachConfig[]
+  UserPermission                   UserPermission[]
+  orderAsCounter                   Order[]                     @relation("CounterUser") // Orders related to this user as a counter
+  orderCancelled                   Order[]                     @relation("CancelByUser") // Orders cancelled by this user
+  orderSeat                        orderSeat[]
+  collection                       Collection[]                @relation("supervisor")
+  collectionAuthorize              Collection[]                @relation("authorize")
+  Expense                          Expense[]                   @relation("supervisor")
+  expenseAuthorize                 Expense[]                   @relation("authorize")
+  FuelPayment                      FuelPayment[]
+  CounterBookedSeat                CounterBookedSeat[]
+  ExpenseAccounts                  ExpenseAccounts[]
+  SupervisorReportSubmit           SupervisorReportSubmit[]
+  authorizeUserSupervisorReport    SupervisorReportSubmit[]    @relation("authorize")
+  CounterReportSubmitAuthorizeUser CounterReportSubmit[]       @relation("authorize")
+  CounterReportSubmit              CounterReportSubmit[]
+  PaymentAccounts                  PaymentAccounts[]
+  permission                       PermissionUser?
+  FundPrepaid                      FundPrepaid[]
+  CoachArrivedDepart               CoachArrivedDepart[]
+  CoachAssignToCounterMaster       CoachAssignToCounterMaster?
+}
+
+model FundPrepaid {
+  id          Int               @id @default(autoincrement())
+  userId      Int
+  paymentType FundPaymentType
+  status      FundPrepaidStatus @default(Pending)
+  txId        String
+  amount      Int
+  date        DateTime
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  user        User              @relation(fields: [userId], references: [id])
+}
+
+model CoachAssignToCounterMaster {
+  id                     Int                      @id @default(autoincrement())
+  userId                 Int                      @unique
+  counterId              Int
+  day                    Int
+  hour                   Int
+  minute                 Int
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  user                   User                     @relation(fields: [userId], references: [id])
+  counter                Counter                  @relation(fields: [counterId], references: [id])
+  BookingRoutePermission BookingRoutePermission[]
+  SellingRoutePermission SellingRoutePermission[]
+}
+
+model BookingRoutePermission {
+  id            Int                        @id @default(autoincrement())
+  coachAssignId Int
+  routeId       Int
+  createdAt     DateTime                   @default(now())
+  updatedAt     DateTime                   @updatedAt
+  coachAssign   CoachAssignToCounterMaster @relation(fields: [coachAssignId], references: [id])
+  route         Route                      @relation(fields: [routeId], references: [id])
+}
+
+model SellingRoutePermission {
+  id            Int                        @id @default(autoincrement())
+  coachAssignId Int
+  routeId       Int
+  createdAt     DateTime                   @default(now())
+  updatedAt     DateTime                   @updatedAt
+  coachAssign   CoachAssignToCounterMaster @relation(fields: [coachAssignId], references: [id])
+  route         Route                      @relation(fields: [routeId], references: [id])
+}
+
+enum FundPaymentType {
+  NAGAD
+  CHEQUE
+  CASH
+  BKASH
+}
+
+enum FundPrepaidStatus {
+  Pending
+  Verified
+  Cancelled
+}
+
+model PermissionUser {
+  id                             Int      @id @default(autoincrement())
+  userId                         Int      @unique
+  board                          Boolean
+  aifs                           Boolean  @default(true)
+  canViewAllCoachInvoice         Boolean
+  bookingPermission              Boolean
+  ticketCancel                   Boolean
+  seatTransfer                   Boolean
+  coachActiveInActive            Boolean
+  blockDiscount                  Boolean
+  showDiscountMenu               Boolean
+  showDiscountFromDate           DateTime @default(now())
+  showDiscountEndDate            DateTime @default(now())
+  vipSeatAllowToSale             Boolean
+  showOwnCounterBoardingPoint    Boolean  @default(false)
+  showOwnCounterSalesInTripSheet Boolean  @default(false)
+  isPrepaid                      Boolean  @default(false)
+  createdAt                      DateTime @default(now())
+  updatedAt                      DateTime @updatedAt
+  user                           User     @relation(fields: [userId], references: [id])
+}
+
+model Driver {
+  id               Int             @id @default(autoincrement())
+  referenceBy      String          @default("N/A")
+  name             String
+  email            String?         @default("N/A")
+  contactNo        String          @unique
+  emergencyNumber  String          @default("N/A")
+  address          String?         @default("N/A")
+  dateOfBirth      String?         @default("N/A")
+  gender           UserGender?     @default(Male)
+  maritalStatus    MarritalStatus? @default(Married)
+  licenseNumber    String          @default("N/A")
+  licenseIssueDate String          @default("N/A")
+  licenseExpDate   String          @default("N/A")
+  licensePhoto     String          @default("N/A")
+  createdAt        DateTime        @default(now())
+  bloodGroup       String?         @default("N/A")
+  active           Boolean         @default(true)
+  avatar           String          @default("https://res.cloudinary.com/droyjiqwf/image/upload/v1696801827/download_d6s8bi.jpg")
+  CoachConfig      CoachConfig[]
+}
+
+model Helper {
+  id              Int             @id @default(autoincrement())
+  referenceBy     String          @default("N/A")
+  name            String
+  email           String?         @default("N/A")
+  contactNo       String          @unique
+  emergencyNumber String          @default("N/A")
+  address         String?         @default("N/A")
+  dateOfBirth     String?         @default("N/A")
+  gender          UserGender?     @default(Male)
+  maritalStatus   MarritalStatus? @default(Married)
+  createdAt       DateTime        @default(now())
+  bloodGroup      String?         @default("N/A")
+  active          Boolean         @default(true)
+  avatar          String          @default("https://res.cloudinary.com/droyjiqwf/image/upload/v1696801827/download_d6s8bi.jpg")
+  CoachConfig     CoachConfig[]
+}
+
+model Role {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User[]
+}
+
+model SeatPlan {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  noOfSeat  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Fare      Fare[]
+  Coach     Coach[]
+}
+
+enum UserRole {
+  ADMIN
+  DEVELOPER
+  SUPERVISOR
+}
+
+enum UserGender {
+  Male
+  Female
+}
+
+enum MarritalStatus {
+  Married
+  Unmarried
+}
+
+model Bus {
+  id    Int    @id @default(autoincrement())
+  image String
+}
+
+model Coach {
+  id                   Int             @id @default(autoincrement())
+  coachNo              String          @unique
+  schedule             String
+  routeId              Int
+  fromCounterId        Int
+  destinationCounterId Int
+  seatPlanId           Int
+  coachClass           BookingClass    @default(E_Class)
+  coachType            String          @default("AC") //AC or non AC
+  type                 String          @default("Daily") //Daily or weekly
+  holdingTime          String?         @default("N/A")
+  fareAllowed          String?         @default("N/A")
+  vipTimeOut           String?         @default("N/A")
+  active               Boolean         @default(true)
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  route                Route           @relation(fields: [routeId], references: [id])
+  seatPlan             SeatPlan        @relation(fields: [seatPlanId], references: [id])
+  fromCounter          Counter         @relation("FromCounter", fields: [fromCounterId], references: [id])
+  destinationCounter   Counter         @relation("DestinationCounter", fields: [destinationCounterId], references: [id])
+  CoachConfig          CoachConfig[]
+  CoachViaRoute        CoachViaRoute[]
+}
+
+model CoachViaRoute {
+  id              Int      @id @default(autoincrement())
+  coachId         Int
+  counterId       Int
+  isBoardingPoint Boolean
+  isDroppingPoint Boolean
+  boardingTime    String?
+  droppingTime    String?
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  coach           Coach    @relation(fields: [coachId], references: [id])
+  counter         Counter  @relation(fields: [counterId], references: [id])
+}
+
+enum CoachType {
+  Double_Deck
+  Single_Deck
+}
+
+model Counter {
+  id                         Int                          @id @default(autoincrement())
+  type                       CounterType
+  name                       String
+  address                    String
+  landMark                   String?                      @default("N/A")
+  locationUrl                String?                      @default("N/A")
+  phone                      String?
+  mobile                     String                       @unique
+  fax                        String?                      @default("N/A")
+  email                      String?
+  primaryContactPersonName   String
+  country                    String                       @default("Bangladesh")
+  stationId                  Int
+  status                     Boolean
+  balance                    Float                        @default(0)
+  bookingAllowStatus         BookingStatus                @default(Coach_Wish)
+  bookingAllowClass          BookingClass                 @default(B_Class)
+  zone                       String?                      @default("N/A")
+  isSmsSend                  Boolean
+  createdAt                  DateTime                     @default(now())
+  updatedAt                  DateTime                     @updatedAt
+  commissionType             DiscountType                 @default(Fixed)
+  commission                 Int                          @default(0)
+  station                    Station                      @relation(fields: [stationId], references: [id])
+  Collection                 Collection[]
+  User                       User[]
+  Order                      Order[]
+  CounterBookedSeat          CounterBookedSeat[]
+  BookingSeat                BookingSeat[]
+  CoachArrivedDepart         CoachArrivedDepart[]
+  CoachAssignToCounterMaster CoachAssignToCounterMaster[]
+  CoachViaRoute              CoachViaRoute[]
+  fromCoach                  Coach[]                      @relation("FromCounter")
+  destinationCoach           Coach[]                      @relation("DestinationCounter")
+}
+
+enum BookingStatus {
+  Coach_Wish
+  Route_Wish
+  Total
+}
+
+enum BookingClass {
+  B_Class
+  E_Class
+  S_Class
+  Sleeper
+}
+
+enum CounterType {
+  Own_Counter
+  Commission_Counter
+  Head_Office
+}
+
+model Station {
+  id              Int           @id @default(autoincrement())
+  name            String
+  isSegment       Boolean       @default(false)
+  isActive        Boolean       @default(true)
+  fromRoutes      Route[]       @relation("FromStation")
+  toRoutes        Route[]       @relation("ToStation")
+  fromSegment     Segment[]     @relation("FromSegment")
+  toSegment       Segment[]     @relation("ToSegment")
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @default(now()) @updatedAt
+  viaRoute        viaRoute[]
+  Counter         Counter[]
+  fromStation     orderSeat[]   @relation("fromStation")
+  toStation       orderSeat[]   @relation("toStation")
+  FromSegmentFare SegmentFare[] @relation("FromSegmentFare")
+  ToSegmentFare   SegmentFare[] @relation("ToSegmentFare")
+}
+
+model Route {
+  id                      Int                      @id @default(autoincrement())
+  routeType               RouteType                @default(Local)
+  routeDirection          RouteDirection           @default(Up_Way)
+  kilo                    Int?
+  isPassengerInfoRequired Boolean                  @default(false)
+  via                     String?
+  routeName               String
+  from                    Int
+  middle                  Int?
+  to                      Int
+  fromStation             Station                  @relation("FromStation", fields: [from], references: [id])
+  toStation               Station                  @relation("ToStation", fields: [to], references: [id])
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @default(now()) @updatedAt
+  viaRoute                viaRoute[]
+  Reserve                 Reserve[]
+  Coach                   Coach[]
+  Fare                    Segment[]
+  BookingRoutePermission  BookingRoutePermission[]
+  SellingRoutePermission  SellingRoutePermission[]
+  Segment                 Fare[]
+  offereds                Offered[]
+}
+
+enum RouteType {
+  Local
+  International
+}
+
+enum RouteDirection {
+  Up_Way
+  Down_Way
+}
+
+model viaRoute {
+  id        Int      @id @default(autoincrement())
+  routeId   Int
+  stationId Int
+  schedule  String?
+  station   Station  @relation(fields: [stationId], references: [id])
+  route     Route    @relation(fields: [routeId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Segment {
+  id                   Int      @id @default(autoincrement())
+  routeId              Int
+  type                 String   @default("AC")
+  fromStationId        Int
+  toStationId          Int
+  e_class_amount       Int
+  b_class_amount       Int
+  sleeper_class_amount Int
+  active               Boolean  @default(true)
+  route                Route    @relation(fields: [routeId], references: [id])
+  fromStation          Station  @relation("FromSegment", fields: [fromStationId], references: [id])
+  toStation            Station  @relation("ToSegment", fields: [toStationId], references: [id])
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model Schedule {
+  id        Int      @id @default(autoincrement())
+  time      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Seat {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SisterConcern {
+  id        Int      @id @default(autoincrement())
+  image     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CoreValue {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  image       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Offered {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  image       String
+  startDate   DateTime
+  endDate     DateTime
+  routeId     Int?
+  couponCode  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  route       Route?   @relation(fields: [routeId], references: [id])
+}
+
+model FAQ {
+  id        Int      @id @default(autoincrement())
+  question  String   @db.Text
+  answer    String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserStatics {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  image       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Pages {
+  id             Int         @id @default(autoincrement())
+  type           PageType    @default(Policy)
+  title          String
+  slug           String
+  content        String      @db.Text
+  seoTitle       String?
+  seoDescription String?
+  status         ProductType @default(Published)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+enum PageType {
+  Policy
+  Navigation
+}
+
+enum ProductType {
+  Draft
+  Trust
+  Published
+  Upcoming
+}
+
+model BlogCategory {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Blog {
+  id             Int         @id @default(autoincrement())
+  title          String      @unique
+  slug           String      @unique
+  author         String
+  categoryId     Int
+  content        String      @db.Text
+  image          String
+  seoTitle       String?
+  seoDescription String?
+  status         ProductType @default(Published)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model Trip {
+  id                   Int         @id @default(autoincrement())
+  registrationNo       String
+  coachConfigIdUpWay   Int
+  upDate               String
+  downDate             String?
+  coachConfigIdDownWay Int?
+  totalIncome          Int         @default(0)
+  totalExpense         Int         @default(0)
+  cashOnHand           Int         @default(0)
+  gp                   Int         @default(8000)
+  tripStatus           TripStatus  @default(Running)
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  coachConfig          CoachConfig @relation(fields: [coachConfigIdUpWay], references: [id])
+}
+
+enum TripStatus {
+  Running
+  Close
+}
+
+model CoachArrivedDepart {
+  id            Int         @id @default(autoincrement())
+  counterId     Int
+  userId        Int
+  coachConfigId Int
+  isArrived     Boolean     @default(true)
+  isDepart      Boolean     @default(false)
+  arrivedDate   DateTime    @default(now())
+  departDate    DateTime?
+  user          User        @relation(fields: [userId], references: [id])
+  counter       Counter     @relation(fields: [counterId], references: [id])
+  coachConfig   CoachConfig @relation(fields: [coachConfigId], references: [id])
+}
+
+model CoachConfig {
+  id                            Int                      @id @default(autoincrement())
+  coachNo                       String
+  tripNo                        Int?
+  registrationNo                String?
+  supervisorId                  Int?
+  supervisorStatus              Status                   @default(Pending)
+  driverId                      Int?
+  driverStatus                  Status                   @default(Pending)
+  helperId                      Int?
+  helperStatus                  Status                   @default(Pending)
+  discount                      Float                    @default(0)
+  discountType                  DiscountType             @default(Fixed)
+  seatAvailable                 Int                      @default(0)
+  tokenAvailable                Int                      @default(0)
+  departureDate                 String // date format Ex: yyyy-MM-dd
+  note                          String?
+  active                        Boolean                  @default(true)
+  createdAt                     DateTime                 @default(now())
+  updatedAt                     DateTime                 @updatedAt
+  supervisor                    User?                    @relation(fields: [supervisorId], references: [id])
+  coach                         Coach                    @relation(fields: [coachNo], references: [coachNo])
+  vehicle                       Vehicle?                 @relation(fields: [registrationNo], references: [registrationNo])
+  driver                        Driver?                  @relation(fields: [driverId], references: [id])
+  helper                        Helper?                  @relation(fields: [helperId], references: [id])
+  Collection                    Collection[]
+  orderSeat                     orderSeat[]
+  Expense                       Expense[]
+  bookingSeat                   BookingSeat[]
+  FuelPayment                   FuelPayment[]
+  CounterBookedSeat             CounterBookedSeat[]
+  cancelOrderSeat               CancelOrderSeat[]
+  supervisorReportSubmitUpWay   SupervisorReportSubmit[] @relation("Up_Way_Coach")
+  SupervisorReportSubmitDownWay SupervisorReportSubmit[] @relation("Down_Way_Coach")
+  Order                         Order[]
+  CounterReportSubmit           CounterReportSubmit[]
+  Trip                          Trip[]
+  CoachArrivedDepart            CoachArrivedDepart[]
+  CoachOpen                     CoachOpen[]
+  CoachClose                    CoachClose[]
+}
+
+model CoachOpen {
+  id            Int         @id @default(autoincrement())
+  coachConfigId Int
+  fromDate      DateTime
+  toDate        DateTime
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  CoachConfig   CoachConfig @relation(fields: [coachConfigId], references: [id])
+}
+
+model CoachClose {
+  id            Int         @id @default(autoincrement())
+  coachConfigId Int
+  fromDate      DateTime
+  toDate        DateTime
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  CoachConfig   CoachConfig @relation(fields: [coachConfigId], references: [id])
+}
+
+model CoachConfigSeats {
+  id            Int      @id @default(autoincrement())
+  coachConfigId Int
+  seat          String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Fare {
+  id          Int           @id @default(autoincrement())
+  routeId     Int
+  type        String        @default("AC") // Ac Or non Ac
+  seatPlanId  Int
+  fromDate    DateTime?
+  toDate      DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  route       Route         @relation(fields: [routeId], references: [id])
+  seatPlan    SeatPlan      @relation(fields: [seatPlanId], references: [id])
+  SegmentFare SegmentFare[]
+}
+
+model SegmentFare {
+  id                   Int                 @id @default(autoincrement())
+  fareId               Int
+  fromStationId        Int
+  toStationId          Int
+  amount               Int
+  e_class_amount       Int                 @default(0)
+  b_class_amount       Int                 @default(0)
+  sleeper_class_amount Int                 @default(0)
+  isActive             Boolean             @default(true)
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  fromStation          Station             @relation("FromSegmentFare", fields: [fromStationId], references: [id])
+  toStation            Station             @relation("ToSegmentFare", fields: [toStationId], references: [id])
+  fare                 Fare                @relation(fields: [fareId], references: [id])
+  orderSeat            orderSeat[]
+  CounterBookedSeat    CounterBookedSeat[]
+}
+
+model Customer {
+  id                   Int          @id @default(autoincrement())
+  name                 String?
+  phone                String       @unique
+  email                String?
+  password             String?
+  address              String?
+  fromStationId        Int?
+  destinationStationId Int?
+  discountType         DiscountType @default(Fixed)
+  discount             Float        @default(0)
+  isPermanent          Boolean      @default(false)
+  discountUse          Int          @default(0)
+  availableDiscount    Int          @default(0)
+  isActive             Boolean      @default(true)
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  reviews              Review[]
+}
+
+model Account {
+  id                  Int               @id @default(autoincrement())
+  bankName            String
+  accountHolderName   String
+  accountName         String
+  accountNumber       String
+  accountType         AccountType
+  openingBalance      Int
+  currentBalance      Float             @default(0)
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  InternalPayment     InternalPayment[]
+  BalanceTransferFrom BalanceTransfer[] @relation("FromAccount")
+  BalanceTransferTo   BalanceTransfer[] @relation("ToAccount")
+  PaymentAccounts     PaymentAccounts[]
+}
+
+enum AccountType {
+  MobileBanking
+  Bank
+  Cash
+}
+
+model BalanceTransfer {
+  id            Int      @id @default(autoincrement())
+  fromAccountId Int
+  toAccountId   Int
+  amount        Float
+  fromAccount   Account  @relation("FromAccount", fields: [fromAccountId], references: [id])
+  toAccount     Account  @relation("ToAccount", fields: [toAccountId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Slider {
+  id        Int      @id @default(autoincrement())
+  image     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SubCategory {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Vehicle {
+  id                     Int           @id @default(autoincrement())
+  registrationNo         String        @unique
+  manufacturerCompany    String?       @default("N/A")
+  model                  String?       @default("N/A")
+  chasisNo               String?       @default("N/A")
+  engineNo               String?       @default("N/A")
+  countryOfOrigin        String?       @default("N/A")
+  lcCode                 String?       @default("N/A")
+  deliveryToDipo         String?       @default("N/A")
+  deliveryDate           String?
+  orderDate              String?
+  coachType              String?
+  seatPlan               String?
+  isActive               Boolean       @default(true)
+  registrationFile       String        @default("N/A")
+  registrationExpiryDate String        @default("N/A")
+  fitnessExpiryDate      String        @default("N/A")
+  routePermitExpiryDate  String        @default("N/A")
+  taxTokenExpiryDate     String        @default("N/A")
+  fitnessCertificate     String        @default("N/A")
+  taxToken               String        @default("N/A")
+  routePermit            String        @default("N/A")
+  active                 Boolean       @default(true)
+  color                  String?       @default("N/A")
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+  CoachConfig            CoachConfig[]
+  DueTable               DueTable[]
+  FuelPayment            FuelPayment[]
+}
+
+model ExpenseCategory {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  ExpenseSubCategory ExpenseSubCategory[]
+  Expense            Expense[]
+}
+
+model ExpenseSubCategory {
+  id                Int             @id @default(autoincrement())
+  name              String
+  expenseCategoryId Int
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  expenseCategory   ExpenseCategory @relation(fields: [expenseCategoryId], references: [id])
+}
+
+model Expense {
+  id                Int               @id @default(autoincrement())
+  coachConfigId     Int
+  supervisorId      Int
+  authorizeBy       Int?
+  fuelCompanyId     Int?
+  authorizeStatus   Boolean           @default(false)
+  edit              Boolean           @default(true)
+  expenseCategoryId Int
+  routeDirection    RouteDirection
+  expenseType       ExpenseType       @default(Others)
+  amount            Int
+  paidAmount        Int               @default(0)
+  dueAmount         Int               @default(0)
+  fuelWeight        Int               @default(0)
+  fuelPrice         Int               @default(0)
+  file              String?
+  date              String
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  fuelCompany       FuelCompany?      @relation(fields: [fuelCompanyId], references: [id])
+  coachConfig       CoachConfig       @relation(fields: [coachConfigId], references: [id])
+  supervisor        User              @relation("supervisor", fields: [supervisorId], references: [id])
+  authorize         User?             @relation("authorize", fields: [authorizeBy], references: [id])
+  expenseCategory   ExpenseCategory   @relation(fields: [expenseCategoryId], references: [id])
+  InternalPayment   InternalPayment[]
+  FuelPayment       FuelPayment[]
+}
+
+model DueTable {
+  id             Int         @id @default(autoincrement())
+  registrationNo String
+  fuelCompanyId  Int
+  due            Int
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  fuelCompany    FuelCompany @relation(fields: [fuelCompanyId], references: [id])
+  vehicle        Vehicle     @relation(fields: [registrationNo], references: [registrationNo])
+}
+
+enum ExpenseType {
+  Fuel
+  Toll
+  Parking
+  Others
+}
+
+model ExpenseCategoryAccounts {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ExpenseSubCategoryAccounts ExpenseSubCategoryAccounts[]
+  ExpenseAccounts            ExpenseAccounts[]
+}
+
+model ExpenseSubCategoryAccounts {
+  id                     Int                     @id @default(autoincrement())
+  name                   String
+  expenseCategoryId      Int
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  expenseCategoryAccount ExpenseCategoryAccounts @relation(fields: [expenseCategoryId], references: [id])
+  ExpenseAccounts        ExpenseAccounts[]
+}
+
+model ExpenseAccounts {
+  id                        Int                        @id @default(autoincrement())
+  userId                    Int
+  note                      String?
+  expenseCategoryId         Int
+  expenseSubCategoryId      Int
+  totalAmount               Int
+  file                      String?
+  date                      String
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+  user                      User?                      @relation(fields: [userId], references: [id])
+  expenseCategoryAccount    ExpenseCategoryAccounts    @relation(fields: [expenseCategoryId], references: [id])
+  expenseSubCategoryAccount ExpenseSubCategoryAccounts @relation(fields: [expenseSubCategoryId], references: [id])
+  PaymentAccounts           PaymentAccounts[]
+}
+
+model SupervisorReportSubmit {
+  id                   Int         @id @default(autoincrement())
+  tripNo               Int?
+  supervisorId         Int
+  upWayCoachConfigId   Int
+  downWayCoachConfigId Int
+  upWayDate            String
+  downWayDate          String
+  totalIncome          Int         @default(0)
+  totalExpense         Int         @default(0)
+  bannerCost           Int         @default(8000)
+  cashOnHand           Int
+  authorize            Int?
+  authorizeStatus      Boolean     @default(false)
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  supervisor           User        @relation(fields: [supervisorId], references: [id])
+  authorizeBy          User?       @relation("authorize", fields: [authorize], references: [id])
+  upWayCoach           CoachConfig @relation("Up_Way_Coach", fields: [upWayCoachConfigId], references: [id])
+  downWayCoach         CoachConfig @relation("Down_Way_Coach", fields: [downWayCoachConfigId], references: [id])
+}
+
+model CounterReportSubmit {
+  id              Int         @id @default(autoincrement())
+  tripNo          Int
+  userId          Int
+  coachConfigId   Int
+  date            String
+  counterId       Int
+  totalPassenger  Int
+  amount          Int
+  authorize       Int?
+  authorizeStatus Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  user            User        @relation(fields: [userId], references: [id])
+  authorizeBy     User?       @relation("authorize", fields: [authorize], references: [id])
+  coachConfig     CoachConfig @relation(fields: [coachConfigId], references: [id])
+}
+
+model PaymentAccounts {
+  id               Int                 @id @default(autoincrement())
+  userId           Int?
+  accountId        Int
+  paymentAmount    Float
+  paymentType      AccountsPaymentType @default(Expense)
+  paymentInOut     PaymentInOut        @default(OUT)
+  expenseAccountId Int?
+  note             String              @default("N/A")
+  createdAt        DateTime            @default(now())
+  account          Account             @relation(fields: [accountId], references: [id])
+  user             User?               @relation(fields: [userId], references: [id])
+  expense          ExpenseAccounts?    @relation(fields: [expenseAccountId], references: [id])
+}
+
+enum AccountsPaymentType {
+  Expense
+  Fuel
+  Supervisor
+  Counter
+}
+
+enum PaymentInOut {
+  IN
+  OUT
+}
+
+model Collection {
+  id              Int            @id @default(autoincrement())
+  coachConfigId   Int
+  counterId       Int?
+  authorizeBy     Int?
+  authorizeStatus Boolean        @default(false)
+  edit            Boolean        @default(true)
+  supervisorId    Int
+  collectionType  CollectionType @default(CounterCollection)
+  routeDirection  RouteDirection
+  noOfPassenger   Int            @default(0)
+  token           Int            @default(0)
+  amount          Int
+  date            String
+  close           Boolean        @default(false)
+  file            String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  coachConfig     CoachConfig    @relation(fields: [coachConfigId], references: [id])
+  counter         Counter?       @relation(fields: [counterId], references: [id])
+  supervisor      User           @relation("supervisor", fields: [supervisorId], references: [id])
+  authorize       User?          @relation("authorize", fields: [authorizeBy], references: [id])
+}
+
+enum CollectionType {
+  CounterCollection
+  OpeningBalance
+  OthersIncome
+}
+
+model FuelPayment {
+  id               Int             @id @default(autoincrement())
+  paymentType      FuelPaymentType @default(FirstPayment)
+  expenseId        Int?
+  coachConfigId    Int?
+  registrationNo   String
+  userId           Int
+  fuelCompanyId    Int
+  date             String
+  amount           Int             @default(0)
+  paidAmount       Int
+  currentDueAmount Int
+  fuelWeight       Int             @default(0)
+  fuelPrice        Int             @default(0)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  expense          Expense?        @relation(fields: [expenseId], references: [id])
+  coachConfig      CoachConfig?    @relation(fields: [coachConfigId], references: [id])
+  user             User?           @relation(fields: [userId], references: [id])
+  fuelCompany      FuelCompany     @relation(fields: [fuelCompanyId], references: [id])
+  vehicle          Vehicle         @relation(fields: [registrationNo], references: [registrationNo])
+}
+
+enum FuelPaymentType {
+  FirstPayment
+  DuePayment
+}
+
+model FuelCompany {
+  id          Int           @id @default(autoincrement())
+  name        String
+  address     String
+  phone       String
+  email       String?
+  website     String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  FuelPayment FuelPayment[]
+  Expense     Expense[]
+  DueTable    DueTable[]
+}
+
+model RegistrationDiscount {
+  id           Int          @id @default(autoincrement())
+  discountType DiscountType @default(Fixed)
+  discount     Float
+  isPermanent  Boolean
+  usedLimit    Int
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Order {
+  id                   Int               @id @default(autoincrement())
+  ticketNo             String            @unique
+  returnOrderId        Int?              @unique
+  counterId            Int?
+  coachConfigId        Int
+  userId               Int?
+  orderType            OrderType         @default(One_Trip)
+  customerName         String            @default("N/A")
+  phone                String            @default("N/A")
+  email                String?
+  address              String            @default("N/A")
+  age                  String?
+  gender               UserGender?       @default(Male)
+  status               Status            @default(Pending)
+  cancelBy             Int?
+  cancelNote           String?
+  refundPercentage     Int?
+  refundType           String?
+  cancelRequest        Boolean           @default(false)
+  nid                  String            @default("N/A")
+  nationality          String            @default("Bangladesh")
+  paymentMethod        String            @default("N/A")
+  paymentType          PaymentType       @default(FULL)
+  boardingPoint        String            @default("N/A")
+  droppingPoint        String            @default("N/A")
+  returnBoardingPoint  String            @default("N/A")
+  returnDroppingPoint  String            @default("N/A")
+  noOfSeat             Int               @default(1)
+  amount               Int
+  paymentAmount        Int               @default(0)
+  dueAmount            Int               @default(0)
+  payment              Boolean           @default(false)
+  partial              Boolean           @default(false)
+  partialPaymentAmount Int               @default(0)
+  smsSend              Boolean           @default(false)
+  online               Boolean           @default(true)
+  date                 String //yy-mm-dd
+  returnDate           String?
+  goods                Int               @default(0)
+  grossPay             Int               @default(0)
+  goodsDiscount        Int               @default(0)
+  netPay               Int               @default(0)
+  bookingType          BookingType       @default(SeatIssue)
+  expiryBookingDate    String?
+  expiryBookingTime    String?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  cancelByUser         User?             @relation("CancelByUser", fields: [cancelBy], references: [id])
+  counter              Counter?          @relation(fields: [counterId], references: [id])
+  coachConfig          CoachConfig       @relation(fields: [coachConfigId], references: [id])
+  orderSeat            orderSeat[]
+  Payment              Payment[]
+  cancelOrderSeat      CancelOrderSeat[]
+  user                 User?             @relation("CounterUser", fields: [userId], references: [id])
+  returnOrder          Order?            @relation("OrderToOrder", fields: [returnOrderId], references: [id])
+  order                Order?            @relation("OrderToOrder")
+  review               Review?
+}
+
+enum OrderType {
+  One_Trip
+  Round_Trip
+}
+
+model GoodsOparation {
+  id            Int      @id @default(autoincrement())
+  ticketNumber  String
+  goods         Int      @default(0)
+  grossPay      Int      @default(0)
+  goodsDiscount Int      @default(0)
+  netPay        Int      @default(0)
+  previeousPay  Int      @default(0)
+  totalPay      Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model orderSeat {
+  id                   Int          @id @default(autoincrement())
+  orderId              Int
+  migrateSeatId        Int?         @unique
+  coachConfigId        Int
+  class                BookingClass @default(Sleeper)
+  segmentId            Int
+  isSeatShare          Boolean      @default(false)
+  fromStationId        Int
+  destinationStationId Int
+  status               Status       @default(Pending)
+  fare                 Int          @default(0)
+  discount             Int          @default(0)
+  online               Boolean      @default(true)
+  cancelBy             Int?
+  paymentMethod        String       @default("N/A")
+  date                 String // date format Ex: yyyy-MM-dd
+  seat                 String //EX: B-4
+  unitPrice            Int          @default(0)
+  cancelNote           String?
+  refundAmount         Int          @default(0)
+  refundType           String?
+  createdAt            DateTime     @default(now())
+  cancelDate           DateTime?
+  updatedAt            DateTime     @updatedAt
+  fromStation          Station      @relation("fromStation", fields: [fromStationId], references: [id])
+  toStation            Station      @relation("toStation", fields: [destinationStationId], references: [id])
+  coachConfig          CoachConfig  @relation(fields: [coachConfigId], references: [id])
+  segment              SegmentFare  @relation(fields: [segmentId], references: [id])
+  order                Order        @relation(fields: [orderId], references: [id])
+  cancelByUser         User?        @relation(fields: [cancelBy], references: [id])
+  migrateSeat          orderSeat?   @relation("OrderToMigrate", fields: [migrateSeatId], references: [id])
+  migratedTo           orderSeat?   @relation("OrderToMigrate")
+}
+
+model BookingSeat {
+  id            Int         @id @default(autoincrement())
+  counterId     Int
+  coachConfigId Int
+  seat          String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  coachConfig   CoachConfig @relation(fields: [coachConfigId], references: [id])
+  counter       Counter     @relation(fields: [counterId], references: [id])
+}
+
+model CounterBookedSeat {
+  id                   Int         @id @default(autoincrement())
+  counterId            Int
+  userId               Int
+  coachConfigId        Int
+  segmentId            Int
+  isSeatShare          Boolean     @default(false)
+  fromStationId        Int
+  destinationStationId Int
+  date                 String
+  seat                 String
+  customerName         String      @default("N/A")
+  phone                String      @default("N/A")
+  email                String?
+  address              String      @default("N/A")
+  age                  String?
+  gender               UserGender? @default(Male)
+  nid                  String      @default("N/A")
+  nationality          String      @default("Bangladesh")
+  paymentMethod        String      @default("N/A")
+  paymentType          PaymentType @default(FULL)
+  boardingPoint        String      @default("N/A")
+  droppingPoint        String      @default("N/A")
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  coachConfig          CoachConfig @relation(fields: [coachConfigId], references: [id])
+  counter              Counter     @relation(fields: [counterId], references: [id])
+  user                 User        @relation(fields: [userId], references: [id])
+  segment              SegmentFare @relation(fields: [segmentId], references: [id])
+}
+
+enum BookingType {
+  SeatIssue
+  SeatBooking
+}
+
+model CancelOrderSeat {
+  id            Int         @id @default(autoincrement())
+  orderId       Int
+  coachConfigId Int
+  status        Status      @default(Success)
+  online        Boolean     @default(true)
+  schedule      String
+  date          String // date format Ex: yyyy-MM-dd
+  seat          String
+  unitPrice     Int         @default(0)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  coachConfig   CoachConfig @relation(fields: [coachConfigId], references: [id])
+  order         Order?      @relation(fields: [orderId], references: [id])
+}
+
+model Discount {
+  id           Int          @id @default(autoincrement())
+  title        String
+  discountType DiscountType @default(Fixed)
+  discount     Int
+  startDate    DateTime
+  endDate      DateTime
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+enum DiscountType {
+  Fixed
+  Percentage
+}
+
+model Payment {
+  id            Int             @id @default(autoincrement())
+  orderId       Int
+  returnOrderId Int?
+  userPhone     String
+  userEmail     String          @default("N/A")
+  transId       String          @unique
+  valId         String          @default("N/A")
+  cardType      String          @default("N/A")
+  cardIssuer    String          @default("N/A")
+  bankTransId   String          @default("N/A")
+  card_brand    String          @default("N/A")
+  sessionKey    String          @unique
+  amount        Int
+  status        Status          @default(Pending)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  order         Order           @relation(fields: [orderId], references: [id])
+  RefundPayment RefundPayment[]
+}
+
+enum Status {
+  Pending
+  Success
+  Accepted
+  Failed
+  Cancelled
+  CancelRequest
+  Migrate
+}
+
+enum PaymentType {
+  FULL
+  PARTIAL
+}
+
+model InternalPayment {
+  id            Int         @id @default(autoincrement())
+  accountId     Int
+  paymentAmount Float
+  person        Person      @default(Investor)
+  investorId    Int?
+  type          Type
+  subject       SubjectType
+  investingId   Int?
+  expenseId     Int?
+  note          String      @default("N/A")
+  createdAt     DateTime    @default(now())
+  account       Account     @relation(fields: [accountId], references: [id])
+  expense       Expense?    @relation(fields: [expenseId], references: [id])
+  investor      Investor?   @relation(fields: [investorId], references: [id])
+  investing     Investing?  @relation(fields: [investingId], references: [id])
+}
+
+enum SubjectType {
+  Invest
+  InvestOut
+  Payment
+  Expense
+}
+
+enum Type {
+  Credit
+  Debit
+}
+
+enum Person {
+  Investor
+}
+
+model RefundPayment {
+  id            Int      @id @default(autoincrement())
+  paymentId     Int
+  refundRefId   String
+  refundAmount  Int
+  refundRemarks String
+  refundStatus  String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  payment       Payment  @relation(fields: [paymentId], references: [id])
+}
+
+model Investor {
+  id              Int               @id @default(autoincrement())
+  name            String
+  phone           String            @unique
+  email           String?
+  address         String?
+  city            String?
+  postalCode      String?
+  country         String            @default("Bangladesh")
+  dueAmount       Int               @default(0)
+  advanceAmount   Int               @default(0)
+  active          Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  Investing       Investing[]
+  InternalPayment InternalPayment[]
+}
+
+model Investing {
+  id                Int               @id @default(autoincrement())
+  investorId        Int
+  interest          Int               @default(0)
+  note              String?
+  investingBalances Int
+  investingType     InvestingType
+  type              InvestType
+  investor          Investor          @relation(fields: [investorId], references: [id])
+  InternalPayment   InternalPayment[]
+}
+
+enum InvestingType {
+  Investing
+  BankLoan
+  KarzeHasana
+}
+
+enum InvestType {
+  In
+  Out
+}
+
+model CMS {
+  id                        Int      @id @default(autoincrement())
+  companyName               String?
+  email                     String?
+  companyNameBangla         String?
+  companyLogo               String?
+  loginPageImage            String?
+  companyLogoBangla         String?
+  footerLogo                String?
+  footerLogoBangla          String?
+  address                   String?
+  addressBangla             String?
+  city                      String?
+  cityBangla                String?
+  postalCode                String?
+  supportNumber1            String?
+  supportNumber2            String?
+  contactUsImage            String?
+  locationImage             String?
+  faqImage                  String?
+  policyImage               String?
+  googleMap                 String?  @db.Text
+  aboutUsContent            String?  @db.Text
+  homePageDescription       String?  @db.Text
+  homePageDescriptionBangla String?  @db.Text
+  offeredImageOne           String?
+  offeredImageTwo           String?
+  offeredImageThree         String?
+  findTicketBanner          String?
+  facebook                  String?
+  instagram                 String?
+  twitter                   String?
+  linkedin                  String?
+  blogImage                 String?
+  youtube                   String?
+  qrImage                   String?
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+}
+
+model PermissionType {
+  id         Int          @id @default(autoincrement())
+  name       String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  Permission Permission[]
+}
+
+model Permission {
+  id               Int              @id @default(autoincrement())
+  name             String
+  permissionTypeId Int
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  permissionType   PermissionType   @relation(fields: [permissionTypeId], references: [id])
+  RolePermission   RolePermission[]
+  UserPermission   UserPermission[]
+}
+
+model RolePermission {
+  id           Int        @id @default(autoincrement())
+  role         UserRole
+  permissionId Int
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  permission   Permission @relation(fields: [permissionId], references: [id])
+}
+
+model UserPermission {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  permissionId Int
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  user         User       @relation(fields: [userId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+}
+
+model Reserve {
+  id                   Int          @id @default(autoincrement())
+  registrationNo       String?
+  fromDate             DateTime
+  fromDateTime         String?
+  toDate               DateTime
+  toDateTime           String?
+  fromStationId        Int
+  destinationStationId Int
+  routeId              Int?
+  noOfSeat             Int
+  coachClass           BookingClass
+  from                 String?
+  to                   String?
+  passengerName        String
+  contactNo            String
+  address              String
+  amount               Int?         @default(0)
+  paidAmount           Int?         @default(0)
+  dueAmount            Int?         @default(0)
+  remarks              String?
+  isConfirm            Boolean      @default(false)
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  route                Route?       @relation(fields: [routeId], references: [id])
+}
+
+model Review {
+  id         Int          @id @default(autoincrement())
+  customerId Int
+  orderId    Int          @unique
+  rating     Int
+  comment    String
+  status     ReviewStatus @default(Pending)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  customer Customer @relation(fields: [customerId], references: [id])
+  order    Order    @relation(fields: [orderId], references: [id])
+}
+
+enum ReviewStatus {
+  Pending
+  Approved
+  Rejected
+}

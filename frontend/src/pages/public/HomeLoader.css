@@ -1,0 +1,77 @@
+/* Define the animation for circular motion */
+@keyframes circularMotion {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.main {
+  background-color: #f8e3fb;
+  position: relative;
+  width: 140px;
+  height: 140px;
+  border: 6px solid #d948ec; /* Primary border color */
+  border-radius: 50%;
+  overflow: visible; /* Keep the road inside the circle */
+}
+
+.circle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1; /* Place below the bus */
+}
+
+.bus-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  animation: circularMotion 6s linear infinite; /* Rotate the bus around the circle */
+}
+
+.bus-image {
+  position: absolute;
+  top: -50px; /* Align the wheel to touch the border */
+  left: 50%; /* Center horizontally */
+
+  transform: translateX(-50%); /* Center the bus */
+  width: 85px; /* Adjust the size of the bus */
+  height: auto;
+  z-index: 2; /* Ensure it's above the circle */
+}
+
+.road {
+  position: absolute;
+  bottom: 0; /* Align road with the circle bottom */
+  width: 100%;
+  height: 20px;
+  background: linear-gradient(
+    90deg,
+    #840494 25%,
+    #d948ec 25%,
+    #d948ec 50%,
+    #840494 50%,
+    #840494 75%,
+    #d948ec 75%
+  );
+  background-size: 40px 100%;
+  animation: moveRoad 1s linear infinite;
+  z-index: 0; /* Place it inside the circle */
+}
+
+@keyframes moveRoad {
+  from {
+    background-position: 0;
+  }
+  to {
+    background-position: 40px;
+  }
+}

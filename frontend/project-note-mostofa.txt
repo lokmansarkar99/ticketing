@@ -1,0 +1,28 @@
+********21-8-25*******
+1. new route: http://localhost:5173/admin/update_coach_config
+2. http://localhost:5173/admin/dashboard -> export pdf -> Schedule
+3. http://localhost:5173/admin/update_coach_config -> meaning full error message
+4. http://localhost:5173/admin/today_cancel_request -> fixed missing data in table
+5. http://localhost:5173/admin/today_cancel_request -> action -> details modal data fixed
+6. http://localhost:5173/admin/dashboard -> cancel, online sales, online cancel -> schedule (in table and pdf)
+
+********23-8-25*******
+1. http://localhost:5173/admin/user_list -> add user modal -> number input
+2. http://localhost:5173/admin/station_list -> station table & update modal
+3. http://localhost:5173/admin/vehicle_list -> buttons, vehicle update
+4. http://localhost:5173/admin/driver_list -> update modal
+5. http://localhost:5173/admin/vehicle_list -> all image crop problem
+6. http://localhost:5173/admin/role -> commented tab, search,
+7. http://localhost:5173/admin/account_list -> pdf, exel, search
+8. http://localhost:5173/admin/partner_list -> button
+
+********24-8-25*******
+1. http://localhost:5173/admin/reporting_suite -> info cards and grid modify
+2. sidebar scrollbar remove
+3. http://localhost:5173/admin/station_list -> pdf, excel
+4. http://localhost:5173/admin/schedule_list -> pdf, excel
+5. http://localhost:5173/admin/route_list -> pdf, excel
+6. http://localhost:5173/admin/coach_configs -> tab issue
+
+***** missing works (it sould be done letter) *******
+1. http://localhost:5173/admin/finance_list
