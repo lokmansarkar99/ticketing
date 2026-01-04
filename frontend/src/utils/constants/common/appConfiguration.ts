@@ -16,7 +16,7 @@ const version = "V1.0.0";
 export const appConfiguration: IConfigurationProps = {
   appName: "Iconic Express",
   appCode: "__t_beta__",
-  baseUrl: "https://backend.iconicticket.com/api/v1/",
+  baseUrl: import.meta.env.VITE_API_BASE_URL,
   // baseUrl:"https://iconify-backend.vercel.app/api/v1/",
   databaseResetAPI:
     "https://pos-software-with-my-sql-kry-test.vercel.app/api/v1/admin/db-reset-tebd2024",

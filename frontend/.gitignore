@@ -27,3 +27,5 @@ Dockerfile
 *.njsproj
 *.sln
 *.sw?
+
+.env
