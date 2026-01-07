@@ -15,22 +15,27 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
     --background: 0 0% 96%;
-    --foreground: 227 27% 10%;
+    
+    /* Updated: Five Color (Dark Grey/Black) - Used for Text */
+    --foreground: 345 6% 13%;
 
     --card: 0 0% 96%;
-    --card-foreground: 227 27% 10%;
+    --card-foreground: 345 6% 13%;
 
     --popover: 0 0% 96%;
-    --popover-foreground: 227 27% 10%;
+    --popover-foreground: 345 6% 13%;
 
-    --primary: 195 99% 55%;
+    /* Updated: Primary Color (Red) */
+    --primary: 358 85% 52%;
     --primary-foreground: 0 0% 96%;
 
-    --secondary: 294 96% 42%;
+    /* Updated: Secondary Color (Blue) */
+    --secondary: 199 100% 42%;
     --secondary-foreground: 0 0% 100%;
 
-    --tertiary: 214 100% 58%;
-    --tertiary-foreground: 210 100% 99%;
+    /* Updated: Third Color (Green) */
+    --tertiary: 149 100% 24%;
+    --tertiary-foreground: 0 0% 99%;
 
     --muted: 0 0% 87%;
     --muted-foreground: 0 0% 24%;
@@ -41,8 +46,10 @@
     --destructive: 355 100% 69%;
     --destructive-foreground: 356 100% 97%;
 
-    --warning: 14 100% 65%;
-    --warning-foreground: 12 100% 99%;
+    /* Updated: Four Color (Yellow) */
+    --warning: 57 100% 50%;
+    /* Warning text set to dark because background is bright yellow */
+    --warning-foreground: 345 6% 13%; 
 
     --success: 145 50% 63%;
     --success-foreground: 142 58% 96%;
@@ -64,14 +71,17 @@
     --popover: 227 13% 14%;
     --popover-foreground: 240 2% 92%;
 
-    --primary: 195 99% 55%;
+    /* Updated: Primary (Red) */
+    --primary: 358 85% 52%;
     --primary-foreground: 0 0% 96%;
 
-    --secondary: 293 95% 30%;
+    /* Updated: Secondary (Blue) */
+    --secondary: 199 100% 42%;
     --secondary-foreground: 0 0% 100%;
 
-    --tertiary: 214 100% 58%;
-    --tertiary-foreground: 210 100% 99%;
+    /* Updated: Third (Green) */
+    --tertiary: 149 100% 24%;
+    --tertiary-foreground: 0 0% 99%;
 
     --muted: 227 8% 23%;
     --muted-foreground: 240 1% 74%;
@@ -82,8 +92,9 @@
     --destructive: 355 100% 69%;
     --destructive-foreground: 356 100% 97%;
 
-    --warning: 14 100% 65%;
-    --warning-foreground: 12 100% 99%;
+    /* Updated: Four (Yellow) */
+    --warning: 57 100% 50%;
+    --warning-foreground: 345 6% 13%;
 
     --success: 145 50% 63%;
     --success-foreground: 142 58% 96%;
@@ -97,11 +108,12 @@
 }
 
 .t {
-  /* color: #1bc5fe;  primary*/
-  /* color: #840495;  secondary*/
-  /* color: #2986ff ; tertiary */
-  /* color: #ff764d;  warning*/
-  /* color: #71d099; */
+  /* Updated Comment Reference */
+  /* color: #ed1c24;  primary */
+  /* color: #0093D8;  secondary */
+  /* color: #00793A;  tertiary */
+  /* color: #FFF200;  warning/four */
+  /* color: #231F20;  five/text */
   color: #f5f5f5;
   background-color: #131620;
 }
@@ -288,4 +300,3 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
 }
-

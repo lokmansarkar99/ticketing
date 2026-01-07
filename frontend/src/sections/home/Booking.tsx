@@ -547,7 +547,7 @@ const Booking: FC<IBookingProps> = ({
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button
-                                className="w-full h-7 text-xs lg:text-[18px] px-4 lg:px-auto lg:h-auto bg-gray-200 text-black hover:bg-[#830494] hover:text-white"
+                                className="w-full h-7 text-xs lg:text-[18px] px-4 lg:px-auto lg:h-auto bg-gray-200 text-black hover:bg-[#ed1c24] hover:text-white"
                                 onClick={() => {
                                   setBookingState(
                                     (prevState: IBookingStateProps) => ({
@@ -580,7 +580,7 @@ const Booking: FC<IBookingProps> = ({
 
                       <p className="col-span-2">
                         <Button
-                          className="w-full h-7 px-4 lg:px-auto lg:h-[34px] text-xs lg:text-[18px] bg-[#840495] text-white hover:bg-[#560361] hover:text-white"
+                          className="w-full h-7 px-4 lg:px-auto lg:h-[34px] text-xs lg:text-[18px] bg-[#ed1c24] text-white hover:bg-[#560361] hover:text-white"
                           onClick={() => {
                             if (
                               bookingState.fromStationId &&
