@@ -10,7 +10,7 @@ const PublicNavigationTop = () => {
   const { data: singleCms } = useGetSingleCMSQuery({});
 
   return (
-    <header className="sticky z-40 top-0 bg-[#c004d4] dark:bg-[#1f2128] py-[1px]">
+    <header className="sticky z-40 top-0 bg-[#ed1c24] dark:bg-[#1f2128] py-[1px]">
       <section className="max-w-7xl mx-auto px-4 flex items-center justify-between">
         <Paragraph className="w-6/12 text-sm font-semibold hidden lg:block text-white">
           <div className="flex items-center">

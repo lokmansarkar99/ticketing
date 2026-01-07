@@ -102,7 +102,7 @@ const PublicNavigation = () => {
                   key={singleLink.key}
                   className={({ isActive }) =>
                     isActive
-                      ? " border-b-2 mx-2 px-1 border-secondary text-[#c004d4]"
+                      ? " border-b-2 mx-2 px-1 border-secondary text-[#ed1c24]"
                       : "hover:bg-primary/15 mx-2  dark:text-gray-200"
                   }
                   onClick={() => setSelected(singleLink?.key)}
@@ -110,7 +110,7 @@ const PublicNavigation = () => {
                   <button
                     className={`${
                       selected === singleLink?.key
-                        ? " text-[#c004d4] font-bold"
+                        ? " text-[#ed1c24] font-bold"
                         : "hover:bg-primary/15  dark:text-gray-200"
                     } text-sm transition-colors py-0.5 px-1  dark:text-gray-200 relative flex items-center gap-2`}
                   >
@@ -135,7 +135,7 @@ const PublicNavigation = () => {
             </div>
             <div>
               <Link to="customer-auth">
-                <button className="text-sm transition-colors text-white bg-[#c004d4] px-2.5 py-1 relative flex items-center">
+                <button className="text-sm transition-colors text-white bg-[#ed1c24] px-2.5 py-1 relative flex items-center">
                   {translate("লগইন", "SignIn/Register")}
                 </button>
               </Link>
@@ -288,7 +288,7 @@ const PublicNavigation = () => {
                     <Link to="login">
                       <Button
                         size={"xs"}
-                        className="text-sm transition-colors bg-[#c004d4] px-2.5 py-1 rounded-full relative flex items-center"
+                        className="text-sm transition-colors bg-[#ed1c24] px-2.5 py-1 rounded-full relative flex items-center"
                       >
                         {translate("অ্যাডমিন", "Admin")}
                       </Button>
