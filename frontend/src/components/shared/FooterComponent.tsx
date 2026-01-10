@@ -196,7 +196,7 @@ const Footer = () => {
           </div>
           <div>
             Powered by:{" "}
-            <span className="font-semibold text-white">Prantik Paribahan</span>
+            <span className="font-semibold text-white">Iconic Soft Ltd</span>
           </div>
         </div>
       </div>

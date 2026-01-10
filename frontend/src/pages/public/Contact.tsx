@@ -35,14 +35,16 @@ const Contact: FC<IContactProps> = () => {
               Help Center
             </h2>
             <p className="text-sm flex items-center justify-start gap-1.5 px-0.5">
-              <SlEarphonesAlt className="text-secondary"/> +880 1234 567 890
+              <SlEarphonesAlt className="text-secondary"/> +880 1833 303622
+
             </p>
             <p className="text-sm flex items-center justify-start gap-1.5 py-1 px-0.5">
-              <TfiEmail className="text-secondary"/> info@iconicexpress.com
+              <TfiEmail className="text-secondary"/> info@prantikparibahan.com
+
             </p>
             <p className="text-sm flex items-start justify-start gap-1">
-              <MdLocationOn size={18} className="text-secondary"/> House: 20, Road: 10, Dhanmondi,
-              Dhaka-1209
+              <MdLocationOn size={18} className="text-secondary"/> Holding No-7, Shamayik, South Side of Reserve Tank,
+Bagichagaon, Comilla, Bangladesh
             </p>
           </div>
 
