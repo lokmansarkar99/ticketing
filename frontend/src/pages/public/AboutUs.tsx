@@ -7,7 +7,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
-import SisterConcern from "@/sections/home/SisterConcern";
+// import SisterConcern from "@/sections/home/SisterConcern";
 import { CoreValue } from "./CoreValue";
 import { Statistics } from "./Statistics";
 

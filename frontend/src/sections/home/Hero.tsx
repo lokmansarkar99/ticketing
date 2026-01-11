@@ -13,7 +13,7 @@ import OfferPromos from "./OfferPromos";
 import PassengersAboutUs from "./PassengersAboutUs";
 import PopularRoutes from "./PopularRoute";
 import { PaymentMethod } from "@/components/shared/PaymentMethod";
-import SisterConcern from "./SisterConcern";
+// import SisterConcern from "./SisterConcern";
 
 interface IHeroProps {
   items: any;

@@ -39,7 +39,7 @@ import { Heading } from "@/components/common/typography/Heading";
 import { Paragraph } from "@/components/common/typography/Paragraph";
 import { useGetStationsQuery } from "@/store/api/vehiclesSchedule/stationApi";
 import { Statistics } from "./Statistics";
-import SisterConcern from "@/sections/home/SisterConcern";
+// import SisterConcern from "@/sections/home/SisterConcern";
 import HomeLoader from "./HomeLoader";
 import { useGetSingleCMSQuery } from "@/store/api/cms/contentManagementApi";
 
