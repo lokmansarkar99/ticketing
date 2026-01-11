@@ -7,7 +7,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
-import SisterConcern from "@/sections/home/SisterConcern";
+// import SisterConcern from "@/sections/home/SisterConcern";
 import { CoreValue } from "./CoreValue";
 import { Statistics } from "./Statistics";
 
@@ -77,10 +77,10 @@ const AboutUs: FC = () => {
         <div className="mt-10 bg-gray-200 dark:bg-transparent">
           <Statistics />
         </div>
-        <div className="mt-10 max-w-7xl mx-auto  px-2 md:px-4">
+        {/* <div className="mt-10 max-w-7xl mx-auto  px-2 md:px-4"> */}
           {/* ======= Sister Concern Section ======= */}
-          <SisterConcern />
-        </div>
+          {/* <SisterConcern /> */}
+        {/* </div> */}
       </div>
     </PageWrapper>
   );

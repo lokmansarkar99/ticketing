@@ -13,7 +13,7 @@ import OfferPromos from "./OfferPromos";
 import PassengersAboutUs from "./PassengersAboutUs";
 import PopularRoutes from "./PopularRoute";
 import { PaymentMethod } from "@/components/shared/PaymentMethod";
-import SisterConcern from "./SisterConcern";
+// import SisterConcern from "./SisterConcern";
 
 interface IHeroProps {
   items: any;
@@ -187,9 +187,9 @@ const Hero: FC<IHeroProps> = ({ items }) => {
         <div className="max-w-7xl mx-auto px-2 md:px-4 mt-2">
           <PassengersAboutUs />
         </div>
-        <div className="max-w-7xl mx-auto px-2 md:px-4 mt-2">
+        {/* <div className="max-w-7xl mx-auto px-2 md:px-4 mt-2">
           <SisterConcern />
-        </div>
+        </div> */}
         <div className="py-8 bg-[#f3ddf2] dark:bg-background">
           <PaymentMethod />
         </div>

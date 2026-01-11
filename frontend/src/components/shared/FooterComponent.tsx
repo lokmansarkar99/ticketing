@@ -39,7 +39,7 @@ const Footer = () => {
   return (
     <footer className="w-full  text-white  pb-14 lg:pb-0">
       {/* Grid Layout */}
-      <div className="bg-[#c004d4]">
+      <div className="bg-[#ed1c24]">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-8 border-b border-white/20 pb-6 max-w-7xl mx-auto px-2 md:px-4 text-center md:text-left">
           {/* Logo + Info */}
           <div className="order-1 flex flex-col items-center md:items-start gap-3">
@@ -191,12 +191,12 @@ const Footer = () => {
         <div className="py-5 flex flex-col md:flex-row items-center justify-between text-sm text-white/80 text-center md:text-left gap-3  max-w-7xl mx-auto px-2 md:px-4">
           <div>
             {currentYear} ©{" "}
-            <span className="font-semibold text-white">Iconic Soft Ltd.</span> —
+            <span className="font-semibold text-white">Prantik Paribahan Ltd.</span> —
             All Rights Reserved
           </div>
           <div>
             Powered by:{" "}
-            <span className="font-semibold text-white">Iconic Unity Group</span>
+            <span className="font-semibold text-white">Iconic Soft Ltd</span>
           </div>
         </div>
       </div>
