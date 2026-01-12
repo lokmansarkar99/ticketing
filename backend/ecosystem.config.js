@@ -2,7 +2,7 @@ module.exports = {
   apps: [{
     name: 'prantik-cicd',
     script: 'src/index.ts',
-    cwd: '/home/ubuntu/projects/prantik-cicd',
+    cwd: '/home/ubuntu/projects/with-cicd/ticketing/backend',
     interpreter: 'node',
     interpreter_args: '-r ts-node/register/transpile-only --max-old-space-size=1024',
     exec_mode: 'fork',
