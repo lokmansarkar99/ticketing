@@ -68,7 +68,10 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USERNAME }}
         run: |
-          ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+          ssh -o StrictHostKeyChecking=no \
+              -o ServerAliveInterval=30 \
+              -o ServerAliveCountMax=120 \
+              ${EC2_USER}@${EC2_HOST} << 'EOF'
             set -euo pipefail
 
             export NVM_DIR="$HOME/.nvm"
@@ -78,6 +81,7 @@ jobs:
             command -v pm2 >/dev/null 2>&1 || npm i -g pm2
 
             cd /home/ubuntu/projects/with-cicd/ticketing
+
             git fetch --all
             git reset --hard origin/main
 
