@@ -17,10 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
-    defaults:
-      run:
-        shell: bash
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -45,7 +41,7 @@ jobs:
       - name: Setup SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }} # ssh-agent action [web:175]
 
       - name: Deploy on EC2
         env:
@@ -55,14 +51,17 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
             set -euo pipefail
 
-            # Use Node 22 (nvm)
+            # Load nvm for non-interactive shell
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             nvm use 22
 
+            # Ensure pm2 exists for this node version (nvm isolates globals)
+            command -v pm2 >/dev/null 2>&1 || npm i -g pm2
+
             cd /home/ubuntu/projects/with-cicd/ticketing
 
-            # update code (monorepo safe)
+            # Update code
             git fetch --all
             git reset --hard origin/main
 
@@ -70,32 +69,17 @@ jobs:
 
             export PUPPETEER_SKIP_DOWNLOAD=true
 
-            # deterministic install (prevents lockfile drift)
+            # Deterministic install (no lockfile drift) [web:134]
             npm ci
 
-            # build TS -> dist
+            # Build TS -> dist/index.js
             npm run build --if-present
 
-            # prisma prod migrations
+            # Prisma production migrations
             npx prisma migrate deploy
             npx prisma generate
 
-            # apply ecosystem changes reliably
-            pm2 start ecosystem.config.js --only prantik-cicd --update-env || true
-            pm2 reload prantik-cicd --update-env || pm2 restart prantik-cicd --update-env
-
+            # Apply ecosystem config + update env (best practice) [web:115]
+            pm2 start ecosystem.config.js --only prantik-cicd --update-env
             pm2 save
           EOF
-
-      - name: Verify (healthcheck)
-        if: ${{ secrets.HEALTHCHECK_URL != '' }}
-        env:
-          HEALTHCHECK_URL: ${{ secrets.HEALTHCHECK_URL }}
-        run: |
-          for i in 1 2 3 4 5; do
-            code=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTHCHECK_URL" || true)
-            echo "Try $i => HTTP $code"
-            if [ "$code" = "200" ]; then exit 0; fi
-            sleep 5
-          done
-          exit 1

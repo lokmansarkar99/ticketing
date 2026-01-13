@@ -2,19 +2,15 @@ module.exports = {
   apps: [{
     name: 'prantik-cicd',
     cwd: '/home/ubuntu/projects/with-cicd/ticketing/backend',
-
-    // compiled JS entry
     script: './dist/index.js',
-
     exec_mode: 'fork',
     instances: 1,
-
     autorestart: true,
     watch: false,
     max_memory_restart: '400M',
     kill_timeout: 5000,
 
-    // load env from file
+    // Load server .env
     env_file: '/home/ubuntu/projects/with-cicd/ticketing/backend/.env',
 
     env: {
