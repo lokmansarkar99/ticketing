@@ -32,16 +32,19 @@ jobs:
         working-directory: backend
         env:
           PUPPETEER_SKIP_DOWNLOAD: "true"
+          npm_config_ignore_scripts: "true"
         run: npm ci
 
       - name: Build (CI)
         working-directory: backend
-        run: npm run build --if-present
+        run: |
+          npm run build --if-present
+          npm run copy:assets --if-present
 
       - name: Setup SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY }} # ssh-agent action [web:175]
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
       - name: Deploy on EC2
         env:
@@ -51,17 +54,14 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
             set -euo pipefail
 
-            # Load nvm for non-interactive shell
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             nvm use 22
 
-            # Ensure pm2 exists for this node version (nvm isolates globals)
             command -v pm2 >/dev/null 2>&1 || npm i -g pm2
 
             cd /home/ubuntu/projects/with-cicd/ticketing
 
-            # Update code
             git fetch --all
             git reset --hard origin/main
 
@@ -69,17 +69,13 @@ jobs:
 
             export PUPPETEER_SKIP_DOWNLOAD=true
 
-            # Deterministic install (no lockfile drift) [web:134]
             npm ci
 
-            # Build TS -> dist/index.js
             npm run build --if-present
 
-            # Prisma production migrations
             npx prisma migrate deploy
             npx prisma generate
 
-            # Apply ecosystem config + update env (best practice) [web:115]
             pm2 start ecosystem.config.js --only prantik-cicd --update-env
             pm2 save
           EOF
