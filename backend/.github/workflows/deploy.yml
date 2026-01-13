@@ -1,0 +1,101 @@
+name: Deploy Backend (EC2)
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "backend/**"
+      - ".github/workflows/deploy-backend.yml"
+  workflow_dispatch: {}
+
+concurrency:
+  group: backend-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node (CI)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install deps (CI)
+        working-directory: backend
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
+        run: npm ci
+
+      - name: Build (CI)
+        working-directory: backend
+        run: npm run build --if-present
+
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Deploy on EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+            set -euo pipefail
+
+            # Use Node 22 (nvm)
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm use 22
+
+            cd /home/ubuntu/projects/with-cicd/ticketing
+
+            # update code (monorepo safe)
+            git fetch --all
+            git reset --hard origin/main
+
+            cd backend
+
+            export PUPPETEER_SKIP_DOWNLOAD=true
+
+            # deterministic install (prevents lockfile drift)
+            npm ci
+
+            # build TS -> dist
+            npm run build --if-present
+
+            # prisma prod migrations
+            npx prisma migrate deploy
+            npx prisma generate
+
+            # apply ecosystem changes reliably
+            pm2 start ecosystem.config.js --only prantik-cicd --update-env || true
+            pm2 reload prantik-cicd --update-env || pm2 restart prantik-cicd --update-env
+
+            pm2 save
+          EOF
+
+      - name: Verify (healthcheck)
+        if: ${{ secrets.HEALTHCHECK_URL != '' }}
+        env:
+          HEALTHCHECK_URL: ${{ secrets.HEALTHCHECK_URL }}
+        run: |
+          for i in 1 2 3 4 5; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTHCHECK_URL" || true)
+            echo "Try $i => HTTP $code"
+            if [ "$code" = "200" ]; then exit 0; fi
+            sleep 5
+          done
+          exit 1

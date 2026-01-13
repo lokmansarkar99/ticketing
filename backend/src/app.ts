@@ -54,6 +54,13 @@ app.get('/', async (req: Request, res: Response) => {
         )
 });
 
+app.get('/cicd', async(req:Request, res: Response) => {
+    res.status(200).send({
+        success:true,
+        message: "CI CD Working"
+    })
+})
+
 app.use('/api/v1', router);
 
 app.use(notfoundandler);
