@@ -28,7 +28,7 @@ jobs:
           cache: "npm"
           cache-dependency-path: backend/package-lock.json
 
-      # 1) Install without lifecycle scripts (so postinstall prisma generate won't run)
+      # Install deps WITHOUT lifecycle scripts (prevents postinstall prisma generate in CI)
       - name: Install deps (CI)
         working-directory: backend
         env:
@@ -36,29 +36,37 @@ jobs:
           npm_config_ignore_scripts: "true"
         run: npm ci
 
-      # 2) Generate prisma client explicitly with a dummy DATABASE_URL (no real DB needed)
+      # Generate prisma client with dummy DB URL (types needed for tsc)
       - name: Prisma generate (CI)
         working-directory: backend
         env:
           DATABASE_URL: "mysql://user:pass@localhost:3306/db"
         run: npx prisma generate
 
-      # 3) Build + copy swagger.yaml into dist
+      # Build + copy swagger.yaml into dist
       - name: Build (CI)
         working-directory: backend
         run: |
           npm run build --if-present
           npm run copy:assets --if-present
 
+      # Fail early if secrets missing (no secret values printed)
+      - name: Validate SSH secrets
+        run: |
+          test -n "${{ secrets.EC2_HOST }}" || (echo "Missing EC2_HOST secret" && exit 1)
+          test -n "${{ secrets.EC2_USERNAME }}" || (echo "Missing EC2_USERNAME secret" && exit 1)
+          test -n "${{ secrets.EC2_SSH_KEY }}" || (echo "Missing EC2_SSH_KEY secret" && exit 1)
+
       - name: Setup SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+          ssh-private-key: |
+            ${{ secrets.EC2_SSH_KEY }}
 
       - name: Deploy on EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_USER: ${{ secrets.EC2_USERNAME }}
         run: |
           ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
             set -euo pipefail
