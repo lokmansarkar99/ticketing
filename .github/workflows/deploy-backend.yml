@@ -68,7 +68,13 @@ jobs:
 
                 "export HOME=/home/ubuntu",
                 "export USER=ubuntu",
-                "cd /home/ubuntu",
+
+                "export PATH=/home/ubuntu/.nvm/versions/node/v22.21.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+
+                "which node",
+                "which npm",
+                "node -v",
+                "npm -v",
 
                 "sudo git config --system --add safe.directory /home/ubuntu/projects/with-cicd/ticketing",
 
