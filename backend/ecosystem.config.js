@@ -10,12 +10,10 @@ module.exports = {
     max_memory_restart: '400M',
     kill_timeout: 5000,
 
-    // Load server .env
-    env_file: '/home/ubuntu/projects/with-cicd/ticketing/backend/.env',
-
-    env: {
+    env_production: {
       NODE_ENV: 'production',
-      PORT: 5501
+      PORT: 5501,
+      DATABASE_URL: process.env.DATABASE_URL
     },
 
     error_file: '/home/ubuntu/.pm2/logs/prantik-cicd-error.log',

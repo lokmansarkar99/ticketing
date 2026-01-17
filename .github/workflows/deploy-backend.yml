@@ -1,4 +1,4 @@
-name: Deploy Backend (EC2)
+name: Deploy Backend (SSM)
 
 on:
   push:
@@ -28,7 +28,6 @@ jobs:
           cache: "npm"
           cache-dependency-path: backend/package-lock.json
 
-      # Install deps WITHOUT lifecycle scripts (prevents postinstall prisma generate in CI)
       - name: Install deps (CI)
         working-directory: backend
         env:
@@ -36,64 +35,65 @@ jobs:
           npm_config_ignore_scripts: "true"
         run: npm ci
 
-      # Generate prisma client with dummy DB URL (types needed for tsc)
       - name: Prisma generate (CI)
         working-directory: backend
         env:
           DATABASE_URL: "mysql://user:pass@localhost:3306/db"
         run: npx prisma generate
 
-      # Build + copy swagger.yaml into dist
       - name: Build (CI)
         working-directory: backend
         run: |
           npm run build --if-present
           npm run copy:assets --if-present
 
-      # Fail early if secrets missing (no secret values printed)
-      - name: Validate SSH secrets
+      - name: Validate SSM secrets
         run: |
-          test -n "${{ secrets.EC2_HOST }}" || (echo "Missing EC2_HOST secret" && exit 1)
-          test -n "${{ secrets.EC2_USERNAME }}" || (echo "Missing EC2_USERNAME secret" && exit 1)
-          test -n "${{ secrets.EC2_SSH_KEY }}" || (echo "Missing EC2_SSH_KEY secret" && exit 1)
+          test -n "${{ secrets.AWS_ACCESS_KEY_ID }}" || (echo "Missing AWS_ACCESS_KEY_ID" && exit 1)
+          test -n "${{ secrets.AWS_SECRET_ACCESS_KEY }}" || (echo "Missing AWS_SECRET_ACCESS_KEY" && exit 1)
+          test -n "${{ secrets.AWS_REGION }}" || (echo "Missing AWS_REGION" && exit 1)
+          test -n "${{ secrets.EC2_INSTANCE_ID }}" || (echo "Missing EC2_INSTANCE_ID" && exit 1)
 
-      - name: Setup SSH agent
-        uses: webfactory/ssh-agent@v0.9.0
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          ssh-private-key: |
-            ${{ secrets.EC2_SSH_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Deploy on EC2
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USER: ${{ secrets.EC2_USERNAME }}
+      - name: Deploy on EC2 via SSM
         run: |
-          ssh -o StrictHostKeyChecking=no \
-              -o ServerAliveInterval=30 \
-              -o ServerAliveCountMax=120 \
-              ${EC2_USER}@${EC2_HOST} << 'EOF'
-            set -euo pipefail
+          aws ssm send-command \
+            --instance-ids "${{ secrets.EC2_INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "deploy backend" \
+            --parameters 'commands=[
+              "set -euo pipefail",
 
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            nvm use 22
+              "cd /home/ubuntu/projects/with-cicd/ticketing",
+              "git fetch --all",
+              "git reset --hard origin/main",
+              "cd backend",
 
-            command -v pm2 >/dev/null 2>&1 || npm i -g pm2
+              "export NVM_DIR=\"$HOME/.nvm\"",
+              "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\"",
+              "nvm use 22",
 
-            cd /home/ubuntu/projects/with-cicd/ticketing
+              "command -v pm2 >/dev/null 2>&1 || npm i -g pm2",
+              "export PUPPETEER_SKIP_DOWNLOAD=true",
 
-            git fetch --all
-            git reset --hard origin/main
+              "unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_PROFILE",
 
-            cd backend
-            export PUPPETEER_SKIP_DOWNLOAD=true
+              \"export DATABASE_URL=$(aws ssm get-parameter --name '/ticketing/prod/DATABASE_URL' --with-decryption --query 'Parameter.Value' --output text)\",
+              "test -n \"$DATABASE_URL\"",
 
-            npm ci
-            npm run build --if-present
+              "npm ci",
+              "npm run build --if-present",
 
-            npx prisma migrate deploy
-            npx prisma generate
+              "npx prisma migrate deploy",
+              "npx prisma generate",
 
-            pm2 start ecosystem.config.js --only prantik-cicd --update-env
-            pm2 save
-          EOF
+              "pm2 restart prantik-cicd --update-env || pm2 start ecosystem.config.js --only prantik-cicd --env production --update-env",
+              "pm2 save"
+            ]' \
+            --output text
