@@ -88,7 +88,7 @@ jobs:
                 "npx prisma migrate deploy",
                 "npx prisma generate",
 
-                "pm2 restart prantik-cicd --update-env || pm2 start ecosystem.config.js --only prantik-cicd --env production --update-env",
+                "pm2 reload ecosystem.config.js --only prantik-cicd --env production --update-env || pm2 start ecosystem.config.js --only prantik-cicd --env production --update-env",
                 "pm2 save"
               ]
             }' \

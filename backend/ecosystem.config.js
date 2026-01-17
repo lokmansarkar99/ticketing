@@ -12,7 +12,7 @@ module.exports = {
 
     env_production: {
       NODE_ENV: 'production',
-      PORT: 5501,
+      PORT: '5501',
       DATABASE_URL: process.env.DATABASE_URL
     },
 
