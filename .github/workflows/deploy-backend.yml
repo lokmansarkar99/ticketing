@@ -72,7 +72,28 @@ jobs:
             --comment "deploy backend" \
             --parameters '{
               "commands": [
-                "bash -lc '\''set -euo pipefail; cd /home/ubuntu/projects/with-cicd/ticketing && git fetch --all && git reset --hard origin/main && cd backend && export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 22 && command -v pm2 >/dev/null 2>&1 || npm i -g pm2 && export PUPPETEER_SKIP_DOWNLOAD=true && unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_PROFILE && export DATABASE_URL=$(aws ssm get-parameter --name \"/ticketing/prod/DATABASE_URL\" --with-decryption --query \"Parameter.Value\" --output text) && test -n \"$DATABASE_URL\" && npm ci && npm run build --if-present && npx prisma migrate deploy && npx prisma generate && pm2 restart prantik-cicd --update-env || pm2 start ecosystem.config.js --only prantik-cicd --env production --update-env && pm2 save'\''"
+                "set -eu",
+
+                "git config --global --add safe.directory /home/ubuntu/projects/with-cicd/ticketing",
+
+                "cd /home/ubuntu/projects/with-cicd/ticketing",
+                "git fetch --all",
+                "git reset --hard origin/main",
+
+                "cd /home/ubuntu/projects/with-cicd/ticketing/backend",
+
+                "unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_PROFILE",
+                "export DATABASE_URL=$(aws ssm get-parameter --name \"/ticketing/prod/DATABASE_URL\" --with-decryption --query \"Parameter.Value\" --output text)",
+                "test -n \"$DATABASE_URL\"",
+
+                "npm ci",
+                "npm run build --if-present",
+
+                "npx prisma migrate deploy",
+                "npx prisma generate",
+
+                "pm2 restart prantik-cicd --update-env || pm2 start ecosystem.config.js --only prantik-cicd --env production --update-env",
+                "pm2 save"
               ]
             }' \
             --query "Command.CommandId" \
