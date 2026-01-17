@@ -68,7 +68,6 @@ jobs:
 
                 "export HOME=/home/ubuntu",
                 "export USER=ubuntu",
-
                 "export PATH=/home/ubuntu/.nvm/versions/node/v22.21.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
 
                 "which node",
@@ -110,13 +109,13 @@ jobs:
           CMD="${{ steps.send.outputs.command_id }}"
           IID="${{ secrets.EC2_INSTANCE_ID }}"
 
-          for i in $(seq 1 40); do
+          for i in $(seq 1 120); do
             STATUS=$(aws ssm get-command-invocation --command-id "$CMD" --instance-id "$IID" --query "Status" --output text 2>/dev/null || true)
             echo "Status: $STATUS"
             if [ "$STATUS" = "Success" ] || [ "$STATUS" = "Failed" ] || [ "$STATUS" = "Cancelled" ] || [ "$STATUS" = "TimedOut" ]; then
               break
             fi
-            sleep 6
+            sleep 10
           done
 
           aws ssm get-command-invocation \
