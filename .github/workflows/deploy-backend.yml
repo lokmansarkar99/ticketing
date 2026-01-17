@@ -47,14 +47,6 @@ jobs:
           npm run build --if-present
           npm run copy:assets --if-present
 
-      - name: Validate required secrets
-        shell: bash
-        run: |
-          test -n "${{ secrets.AWS_ACCESS_KEY_ID }}" || (echo "Missing AWS_ACCESS_KEY_ID" && exit 1)
-          test -n "${{ secrets.AWS_SECRET_ACCESS_KEY }}" || (echo "Missing AWS_SECRET_ACCESS_KEY" && exit 1)
-          test -n "${{ secrets.AWS_REGION }}" || (echo "Missing AWS_REGION" && exit 1)
-          test -n "${{ secrets.EC2_INSTANCE_ID }}" || (echo "Missing EC2_INSTANCE_ID" && exit 1)
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -74,7 +66,11 @@ jobs:
               "commands": [
                 "set -eu",
 
-                "git config --global --add safe.directory /home/ubuntu/projects/with-cicd/ticketing",
+                "export HOME=/home/ubuntu",
+                "export USER=ubuntu",
+                "cd /home/ubuntu",
+
+                "sudo git config --system --add safe.directory /home/ubuntu/projects/with-cicd/ticketing",
 
                 "cd /home/ubuntu/projects/with-cicd/ticketing",
                 "git fetch --all",
@@ -125,6 +121,5 @@ jobs:
 
           FINAL_STATUS=$(aws ssm get-command-invocation --command-id "$CMD" --instance-id "$IID" --query "Status" --output text)
           if [ "$FINAL_STATUS" != "Success" ]; then
-            echo "Remote deploy failed with status: $FINAL_STATUS"
             exit 1
           fi
