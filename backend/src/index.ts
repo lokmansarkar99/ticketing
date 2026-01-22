@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import serverApp from './app'
 import config from './config';
 const server = async () => {
