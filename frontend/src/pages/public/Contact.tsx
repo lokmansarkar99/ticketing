@@ -39,12 +39,11 @@ const Contact: FC<IContactProps> = () => {
 
             </p>
             <p className="text-sm flex items-center justify-start gap-1.5 py-1 px-0.5">
-              <TfiEmail className="text-secondary"/> info@prantikparibahan.com
+              <TfiEmail className="text-secondary"/> info@updatedcicdsetup.com
 
             </p>
             <p className="text-sm flex items-start justify-start gap-1">
-              <MdLocationOn size={18} className="text-secondary"/> Holding No-7, Shamayik, South Side of Reserve Tank,
-Bagichagaon, Comilla, Bangladesh
+              <MdLocationOn size={18} className="text-secondary"/> Updated AWS CI/CD Address 
             </p>
           </div>
 
