@@ -121,7 +121,10 @@ const AddUser: FC<IAddUserProps> = ({ setUserState }) => {
   const { data: roleListData, isLoading: roleLoading } =
     useGetAllUserRoleListQuery({});
   const { data: counterList, isLoading: counterLoading } = useGetCountersQuery(
-    {}
+    {
+      size: 10000,
+      page: 1,
+    }
   );
   const [addUser, { isLoading: addUserLoading, error: addUserError }] =
     useAddUserMutation({});
