@@ -534,7 +534,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
           >
             <Select
               value={watch("coachType") || "AC"}
-              onValueChange={(value: "AC" | "NON AC") => {
+              onValueChange={(value: "AC" | "Non AC") => {
                 setValue("coachType", value);
                 setError("coachType", { type: "custom", message: "" });
               }}
@@ -551,7 +551,7 @@ const AddCoachConfiguration: FC<IAddCoachConfigurationProps> = ({
                 <SelectItem value="AC">
                   {translate("শীতাতপ নিয়ন্ত্রিত", "Air Condition")}
                 </SelectItem>
-                <SelectItem value="NON AC">
+                <SelectItem value="Non AC">
                   {translate(
                     "শীতাতপ নিয়ন্ত্রিত বিহীন",
                     "Without Air Condition"

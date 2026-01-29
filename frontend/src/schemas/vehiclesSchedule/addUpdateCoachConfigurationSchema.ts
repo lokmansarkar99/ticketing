@@ -14,7 +14,7 @@ export const addUpdateCoachConfigurationSchema = z.object({
   routeId: z
     .number({ required_error: "Route is required" })
     .min(1, { message: "Route is required" }),
-  coachType: z.enum(["AC", "NON AC"], {
+  coachType: z.enum(["AC", "Non AC"], {
     required_error: "Coach type is required",
   }),
   seatPlanId: z
